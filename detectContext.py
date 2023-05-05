@@ -12,12 +12,13 @@ from utils.general import check_img_size, non_max_suppression, apply_classifier,
 
 from utils.torch_utils import select_device, load_classifier, time_synchronized, TracedModel
 
-
 class Detector():
-    def __init__(self):
-        self.weights, self.imgsz, self.trace =  opt.weights, opt.img_size, not opt.no_trace
-        self.augment, self.conf_thres, self.iou_thres = opt.augment, opt.conf_thres, opt.iou_thres
-        self.classes, self.agnostic_nms = opt.classes, opt.agnostic_nms
+    def __init__(self, weights = 'yolov7-ContextNav.pt', img_size = 320, trace = True, 
+                 augment = False, conf_thres = 0.25, iou_thres = 0.45,
+                 classes = None, agnostic_nms = False):
+        self.weights, self.imgsz, self.trace =  weights, img_size, trace
+        self.augment, self.conf_thres, self.iou_thres = augment, conf_thres, iou_thres
+        self.classes, self.agnostic_nms = classes, agnostic_nms
         # Initialize
         set_logging()
         self.device = select_device(opt.device)
@@ -131,22 +132,8 @@ class Detector():
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--weights', nargs='+', type=str, default='yolov7-ContextNav.pt', help='model.pt path(s)')
-    parser.add_argument('--img-size', type=int, default=640, help='inference size (pixels)')
-    parser.add_argument('--conf-thres', type=float, default=0.25, help='object confidence threshold')
-    parser.add_argument('--iou-thres', type=float, default=0.45, help='IOU threshold for NMS')
-    parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
-    parser.add_argument('--classes', nargs='+', type=int, help='filter by class: --class 0, or --class 0 2 3')
-    parser.add_argument('--agnostic-nms', action='store_true', help='class-agnostic NMS')
-    parser.add_argument('--augment', action='store_true', help='augmented inference')
-    parser.add_argument('--no-trace', action='store_true', help='don`t trace model')
-    opt = parser.parse_args()
-    #print(opt)
-    #check_requirements(exclude=('pycocotools', 'thop'))
 
     with torch.no_grad():
-        
         detector = Detector()
         img_path = input("Put image path:\n") # Remove after ROS implementation
         while img_path: # Remove after ROS implementation - change to callback func
