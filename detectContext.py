@@ -8,20 +8,20 @@ import numpy as np
 from models.experimental import attempt_load
 from utils.datasets import letterbox
 from utils.general import check_img_size, non_max_suppression, apply_classifier, \
-    scale_coords, xyxy2xywh, strip_optimizer, set_logging
+    scale_coords, xyxy2xywh, set_logging
 
 from utils.torch_utils import select_device, load_classifier, time_synchronized, TracedModel
 
 class Detector():
     def __init__(self, weights = 'yolov7-ContextNav.pt', img_size = 320, trace = True, 
                  augment = False, conf_thres = 0.25, iou_thres = 0.45,
-                 classes = None, agnostic_nms = False):
+                 classes = None, agnostic_nms = False, device = ''):
         self.weights, self.imgsz, self.trace =  weights, img_size, trace
         self.augment, self.conf_thres, self.iou_thres = augment, conf_thres, iou_thres
         self.classes, self.agnostic_nms = classes, agnostic_nms
         # Initialize
         set_logging()
-        self.device = select_device(opt.device)
+        self.device = select_device(device)
         self.half = self.device.type != 'cpu'  # half precision only supported on CUDA
 
         # Load model
@@ -49,7 +49,6 @@ class Detector():
             self.model(torch.zeros(1, 3, self.imgsz, self.imgsz).to(self.device).type_as(next(self.model.parameters())))  # run once
         self.old_img_w = self.old_img_h = self.imgsz
         self.old_img_b = 1
-
 
 
     def detect(self, img_path):
@@ -127,8 +126,6 @@ class Detector():
 
                 # Print time (inference + NMS)
                 print(f'{s}Done. ({(1E3 * (t2 - t1)):.1f}ms) Inference, ({(1E3 * (t3 - t2)):.1f}ms) NMS')
-
-
 
 
 if __name__ == '__main__':
