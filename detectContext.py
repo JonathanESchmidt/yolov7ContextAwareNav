@@ -4,7 +4,6 @@ from pathlib import Path
 import cv2
 import torch
 import numpy as np
-from numpy import random
 
 from models.experimental import attempt_load
 from utils.datasets import letterbox
@@ -41,7 +40,6 @@ def detect():
 
     # Get names and colors
     names = model.module.names if hasattr(model, 'module') else model.names
-    colors = [[random.randint(0, 255) for _ in range(3)] for _ in names]
 
     # Run inference
     if device.type != 'cpu':
