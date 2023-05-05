@@ -47,14 +47,14 @@ def detect():
     old_img_w = old_img_h = imgsz
     old_img_b = 1
 
-    new = input("Put image path:\n")
-    while new:
+    new = input("Put image path:\n") # Remove after ROS implementation
+    while new: # Remove after ROS implementation - change to callback func
         
-        path = Path(new)
+        path = Path(new) # Remove after ROS implementation
 
-        for image in path.iterdir():
-            print(image)
-            im0s = cv2.imread(str(image))  # BGR
+        for image in path.iterdir(): # Remove after ROS implementation
+            # TODO change to read images from ROS2
+            im0s = cv2.imread(str(image))  # BGR # Remove after ROS implementation
             assert im0s is not None, 'Image Not Found ' + path
 
             img = letterbox(im0s, imgsz, stride=stride)[0]
@@ -119,12 +119,12 @@ def detect():
                         h = output[4]
                         confi = output[5]
 
-                        print(f"All = {ID}, {x}, {y}, {w}, {h}, {confi}")
+                        print(f"All = {ID}, {x}, {y}, {w}, {h}, {confi}") # Remove after ROS implementation
 
                 # Print time (inference + NMS)
                 print(f'{s}Done. ({(1E3 * (t2 - t1)):.1f}ms) Inference, ({(1E3 * (t3 - t2)):.1f}ms) NMS')
 
-        new = input("Put image path:\n")
+        new = input("Put image path:\n") # Remove after ROS implementation
 
 
 if __name__ == '__main__':
