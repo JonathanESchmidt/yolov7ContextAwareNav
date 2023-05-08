@@ -95,6 +95,7 @@ class Detector(Node):
             img = np.ascontiguousarray(img)
 
             self.result = self.detect(im0s, img)
+            print(self.result) # TODO publish values instead
 
         except Exception as e:
                 print(f"Exception on social_zone_callback")
@@ -129,12 +130,12 @@ class Detector(Node):
 
             # Apply Classifier
             if self.classify:
-                pred = apply_classifier(pred, self.modelc, img, im0s)
+                pred = apply_classifier(pred, self.modelc, img, im0)
 
             # Process detections
             for i, det in enumerate(pred):  # detections per image
             
-                s, im0 = '', im0s
+                s, im0 = '', im0
 
                 gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
                 if len(det):
@@ -159,7 +160,7 @@ class Detector(Node):
                         h = output[4]
                         confi = output[5]
 
-                        print(f"Class = {class_ID}, x = {x}, y = {y}, width = {w}, height = {h}, conf = {confi}") # Remove after ROS implementation
+                        #print(f"Class = {class_ID}, x = {x}, y = {y}, width = {w}, height = {h}, conf = {confi}") # Remove after ROS implementation
 
                 # Print time (inference + NMS)
                 print(f'{s}Done. ({(1E3 * (t2 - t1)):.1f}ms) Inference, ({(1E3 * (t3 - t2)):.1f}ms) NMS')
