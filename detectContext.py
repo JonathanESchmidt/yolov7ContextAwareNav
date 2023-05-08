@@ -35,7 +35,7 @@ class Detector():
         if self.half:
             self.model.half()  # to FP16
 
-        # Second-stage classifier
+        # Second-stage classifier #TODO remove?
         self.classify = False
         if self.classify:
             self.modelc = load_classifier(name='resnet101', n=2)  # initialize
@@ -90,7 +90,7 @@ class Detector():
             pred = non_max_suppression(pred, self.conf_thres, self.iou_thres, classes=self.classes, agnostic=self.agnostic_nms)
             t3 = time_synchronized()
 
-            # Apply Classifier
+            # Apply Classifier #TODO remove?
             if self.classify:
                 pred = apply_classifier(pred, self.modelc, img, im0s)
 
