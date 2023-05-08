@@ -35,12 +35,6 @@ class Detector():
         if self.half:
             self.model.half()  # to FP16
 
-        # Second-stage classifier #TODO remove?
-        self.classify = False
-        if self.classify:
-            self.modelc = load_classifier(name='resnet101', n=2)  # initialize
-            self.modelc.load_state_dict(torch.load('weights/resnet101.pt', map_location=self.device)['model']).to(self.device).eval()
-
         # Get names and colors
         self.names = self.model.module.names if hasattr(self.model, 'module') else self.model.names
 
@@ -89,10 +83,6 @@ class Detector():
             # Apply NMS
             pred = non_max_suppression(pred, self.conf_thres, self.iou_thres, classes=self.classes, agnostic=self.agnostic_nms)
             t3 = time_synchronized()
-
-            # Apply Classifier #TODO remove?
-            if self.classify:
-                pred = apply_classifier(pred, self.modelc, img, im0s)
 
             # Process detections
             for i, det in enumerate(pred):  # detections per image
