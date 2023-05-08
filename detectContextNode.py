@@ -152,18 +152,18 @@ class Detector(Node):
                         line = (cls, *xywh, conf)
                         output = (('%g ' * len(line)).rstrip() % line).split(' ')
                         
-                        ID = output[0]
+                        class_ID = output[0]
                         x = output[1]
                         y = output[2]
                         w = output[3]
                         h = output[4]
                         confi = output[5]
 
-                        print(f"Class = {ID}, x = {x}, y = {y}, width = {w}, height = {h}, conf = {confi}") # Remove after ROS implementation
+                        print(f"Class = {class_ID}, x = {x}, y = {y}, width = {w}, height = {h}, conf = {confi}") # Remove after ROS implementation
 
                 # Print time (inference + NMS)
                 print(f'{s}Done. ({(1E3 * (t2 - t1)):.1f}ms) Inference, ({(1E3 * (t3 - t2)):.1f}ms) NMS')
-                return ID, x, y, w, h, confi
+                return class_ID, x, y, w, h, confi
 
 
 def main(args=None):
