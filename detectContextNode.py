@@ -1,16 +1,15 @@
 import argparse
 from pathlib import Path
 
-import cv2
 import torch
 import numpy as np
 
 from models.experimental import attempt_load
 from utils.datasets import letterbox
-from utils.general import check_img_size, non_max_suppression, apply_classifier, \
+from utils.general import check_img_size, non_max_suppression, \
     scale_coords, xyxy2xywh, set_logging
 
-from utils.torch_utils import select_device, load_classifier, time_synchronized, TracedModel
+from utils.torch_utils import select_device, time_synchronized, TracedModel
 
 import rclpy
 from rclpy.node import Node
@@ -55,12 +54,6 @@ class Detector(Node):
 
         if self.half:
             self.model.half()  # to FP16
-
-        # Second-stage classifier
-        self.classify = False
-        if self.classify:
-            self.modelc = load_classifier(name='resnet101', n=2)  # initialize
-            self.modelc.load_state_dict(torch.load('weights/resnet101.pt', map_location=self.device)['model']).to(self.device).eval()
 
         # Get names and colors
         self.names = self.model.module.names if hasattr(self.model, 'module') else self.model.names
@@ -127,10 +120,6 @@ class Detector(Node):
             # Apply NMS
             pred = non_max_suppression(pred, self.conf_thres, self.iou_thres, classes=self.classes, agnostic=self.agnostic_nms)
             t3 = time_synchronized()
-
-            # Apply Classifier
-            if self.classify:
-                pred = apply_classifier(pred, self.modelc, img, im0)
 
             # Process detections
             for i, det in enumerate(pred):  # detections per image
