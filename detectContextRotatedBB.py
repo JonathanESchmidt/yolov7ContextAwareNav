@@ -108,21 +108,54 @@ class Detector(Node):
                     gray = cv2.convertScaleAbs(gray)
                     ret, binary = cv2.threshold(gray, 10, 255, cv2.THRESH_BINARY)
 
-                    print(binary.dtype)
+                    
 
+                    x = int(float(x)*im0s.shape[0])
+                    y = int(float(y)*im0s.shape[1])
+                    w = int(float(w)*im0s.shape[0])
+                    h = int(float(h)*im0s.shape[1])
+
+                    # print(f"X: {type(x)}, {x}")
+                    # print(f"Y: {type(y)}, {y}")
+                    # print(f"W: {type(w)}, {w}")
+                    # print(f"H: {type(h)}, {h}")
+
+                    x1 = int(x - w/2)
+                    y1 = int(y - h/2)
+                    x2 = int(x + w/2)
+                    y2 = int(y + h/2)
+
+                    print(f"X: {type(x)}, {x}")
+                    print(f"Y: {type(y)}, {y}")
+
+
+                    print(f"X1: {x1}")
+                    print(f"Y1: {y1}")
+                    print(f"X2: {x2}")
+                    print(f"Y2: {y2}")
+
+                    
+                    # Find contours, find rotated rectangle, obtain four verticies, and draw 
+                    cnts2 = cv2.findContours(binary[x1-50:x2+50, y1-50:y2+50], cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                    cnts2 = cnts2[0] if len(cnts2) == 2 else cnts2[1]
+                    rect = cv2.minAreaRect(cnts2[0]) # ((CenterX, CenterY), (WidthX, WidthY), Angle)
+                    print(f"Rect from small {rect}")
+                    rect2 = ((rect[0][0], rect[0][1]), (rect[1][0], rect[1][1]), rect[2])
+                    box = np.int0(cv2.boxPoints(rect2))
+                    cv2.drawContours(im0s, [box], 0, (36,255,12), 3)
 
                     # Find contours, find rotated rectangle, obtain four verticies, and draw 
                     cnts = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
                     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
                     rect = cv2.minAreaRect(cnts[0]) # ((CenterX, CenterY), (WidthX, WidthY), Angle)
-                    print(rect)
-                    # box = np.int0(cv2.boxPoints(rect))
-                    # print(box)
-                    # cv2.drawContours(im0s, [box], 0, (36,255,12), 3)
+                    print(f"Rect from full {rect}")
+                    box = np.int0(cv2.boxPoints(rect2))
+                    cv2.drawContours(im0s, [box], 0, (255,0,12), 3)
 
                     
-                    # cv2.imwrite(f"./images/{self.image_conut}.png", im0s)
-                    # self.image_conut += 1
+                    cv2.imwrite(f"./images/{self.image_conut}.png", im0s)
+                    print(f"Saved image {self.image_conut}")
+                    self.image_conut += 1
                 
 
         # except Exception as e:
